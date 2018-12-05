@@ -10,3 +10,7 @@ target/
 
 .attach*
 out/
+
+# db
+derby.log
+dictionaryDB/
