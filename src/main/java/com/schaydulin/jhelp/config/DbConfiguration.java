@@ -13,9 +13,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Properties;
 
 @Configuration
-@EnableJpaRepositories
+@EnableJpaRepositories(basePackages = "com.schaydulin.jhelp.repo")
 @PropertySource("classpath:app.properties")
 public class DbConfiguration {
 
@@ -39,12 +40,14 @@ public class DbConfiguration {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        vendorAdapter.setGenerateDdl(true);
+        vendorAdapter.setGenerateDdl(false);
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("com.schaydulin.jhelp.orm");
         factory.setDataSource(dataSource());
+        factory.setJpaProperties(properties());
+        factory.afterPropertiesSet();
         return factory;
     }
 
@@ -54,6 +57,15 @@ public class DbConfiguration {
         JpaTransactionManager txManager = new JpaTransactionManager();
         txManager.setEntityManagerFactory(entityManagerFactory);
         return txManager;
+    }
+
+    @Bean
+    Properties properties() {
+
+        Properties properties = new Properties();
+//        properties.setProperty("hibernate.hbm2ddl.auto", "validate");
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.DerbyTenSevenDialect");
+        return properties;
     }
 
 }

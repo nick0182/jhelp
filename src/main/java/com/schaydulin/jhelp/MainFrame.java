@@ -3,12 +3,15 @@ package com.schaydulin.jhelp;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import com.schaydulin.jhelp.orm.Term;
+import com.schaydulin.jhelp.repo.TermsRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Optional;
 
 @SpringBootApplication
 public class MainFrame extends JFrame {
@@ -39,9 +42,10 @@ public class MainFrame extends JFrame {
     private JMenu settingsMenu;
     private JMenu helpMenu;
 
-    MainFrame() {
+    MainFrame(TermsRepository termsRepository) {
 
         super("JHelp Client");
+
         $$$setupUI$$$();
         setContentPane(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,6 +54,14 @@ public class MainFrame extends JFrame {
         setResizable(false);
         setVisible(true);
 
+        findButton.addActionListener(e -> {
+
+            Optional<Term> anInstanceof = termsRepository.findByTerm("instanceof");
+
+            anInstanceof.ifPresent(of -> System.err.println(of.getDefinitions()));
+
+
+        });
     }
 
     private void createUIComponents() {
