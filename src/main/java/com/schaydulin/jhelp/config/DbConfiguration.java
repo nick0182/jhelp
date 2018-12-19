@@ -1,5 +1,8 @@
 package com.schaydulin.jhelp.config;
 
+import com.schaydulin.jhelp.InitializeDB;
+import com.schaydulin.jhelp.repo.TermsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,15 +26,9 @@ public class DbConfiguration {
     @Value("${data.source.url}")
     private String dataSourceUrl;
 
-    @Value("${data.source.username}")
-    private String dataSourceUsername;
-
-    @Value("${data.source.password}")
-    private String dataSourcePassword;
-
     @Bean
     public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource(dataSourceUrl, dataSourceUsername, dataSourcePassword);
+        DriverManagerDataSource dataSource = new DriverManagerDataSource(dataSourceUrl);
         dataSource.setDriverClassName("org.apache.derby.jdbc.ClientDriver");
         return dataSource;
     }
@@ -63,9 +60,17 @@ public class DbConfiguration {
     Properties properties() {
 
         Properties properties = new Properties();
-//        properties.setProperty("hibernate.hbm2ddl.auto", "validate");
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.DerbyTenSevenDialect");
         return properties;
+    }
+
+    @Bean
+    @Autowired
+    public InitializeDB initializeDB(DataSource dataSource,
+                                     TermsRepository termsRepository) {
+
+        return new InitializeDB(dataSource, termsRepository);
+
     }
 
 }
