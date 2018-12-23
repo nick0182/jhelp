@@ -1,8 +1,5 @@
 package com.schaydulin.jhelp.config;
 
-import com.schaydulin.jhelp.InitializeDB;
-import com.schaydulin.jhelp.repo.TermsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +27,7 @@ public class DbConfiguration {
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource(dataSourceUrl);
         dataSource.setDriverClassName("org.apache.derby.jdbc.ClientDriver");
+        dataSource.setSchema("ADMIN");
         return dataSource;
     }
 
@@ -61,16 +59,8 @@ public class DbConfiguration {
 
         Properties properties = new Properties();
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.DerbyTenSevenDialect");
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
         return properties;
-    }
-
-    @Bean
-    @Autowired
-    public InitializeDB initializeDB(DataSource dataSource,
-                                     TermsRepository termsRepository) {
-
-        return new InitializeDB(dataSource, termsRepository);
-
     }
 
 }
