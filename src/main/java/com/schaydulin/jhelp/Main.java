@@ -113,7 +113,7 @@ public class Main {
                     for (Definition def : definitions)
                         ous.writeObject(def.toString());
                 } else
-                    ous.writeObject("Definition not found");
+                    ous.writeObject(null);
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
