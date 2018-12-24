@@ -17,6 +17,16 @@ public class Definition {
     @JoinColumn(name = "term_id")
     private Term term;
 
+    public Definition() {}
+
+    public Definition(String definition) {
+        this.definition = definition;
+    }
+
+    public void setTerm(Term term) {
+        this.term = term;
+    }
+
     @Override
     public String toString() {
         return definition;

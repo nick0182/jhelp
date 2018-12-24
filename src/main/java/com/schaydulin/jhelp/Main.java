@@ -3,6 +3,7 @@ package com.schaydulin.jhelp;
 import com.schaydulin.jhelp.orm.Definition;
 import com.schaydulin.jhelp.orm.Term;
 import com.schaydulin.jhelp.repo.TermsRepository;
+import command.Command;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -104,18 +105,64 @@ public class Main {
             try (ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
                  ObjectOutputStream ous = new ObjectOutputStream(clientSocket.getOutputStream())) {
 
-                String term = (String) ois.readObject();
+                Command command = (Command) ois.readObject();
 
-                Optional<Term> found = termsRepository.findByTerm(term);
+                switch (command) {
 
-                if (found.isPresent()) {
-                    List<Definition> definitions = found.get().getDefinitions();
-                    for (Definition def : definitions)
-                        ous.writeObject(def.toString());
-                } else
-                    ous.writeObject(null);
+                    case FIND:
+                        find(ois, ous);
+                        break;
+                    case ADD:
+                        add(ois);
+                        break;
+
+                }
+
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
+            }
+
+        }
+
+        private void find(ObjectInputStream ois, ObjectOutputStream ous) throws IOException, ClassNotFoundException {
+
+            String term = (String) ois.readObject();
+
+            Optional<Term> found = termsRepository.findByTerm(term);
+
+            if (found.isPresent()) {
+                List<Definition> definitions = found.get().getDefinitions();
+                for (Definition def : definitions)
+                    ous.writeObject(def.toString());
+            } else
+                ous.writeObject(null);
+
+        }
+
+        private void add(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+
+            String term = (String) ois.readObject();
+
+            String definition = (String) ois.readObject();
+
+            Optional<Term> found = termsRepository.findByTerm(term);
+
+            if (found.isPresent()) {
+
+                Term foundTerm = found.get();
+
+                foundTerm.addDefinition(new Definition(definition));
+
+                termsRepository.saveAndFlush(foundTerm);
+
+            } else {
+
+                Term newTerm = new Term(term);
+
+                newTerm.addDefinition(new Definition(definition));
+
+                termsRepository.saveAndFlush(newTerm);
+
             }
 
         }
