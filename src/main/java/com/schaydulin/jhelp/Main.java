@@ -38,6 +38,8 @@ public class Main {
 
             executorService.submit(new Server(serverSocket));
 
+            executorService.shutdown();
+
             System.out.printf("Local server is launched on port: %d\n", PORT);
 
             System.out.println("To shutdown type \"exit\"");
@@ -46,7 +48,6 @@ public class Main {
 
             while ((line = reader.readLine()) != null)
                 if (line.equals("exit")) {
-                    executorService.shutdown();
                     serverSocket.close();
                     break;
                 }
@@ -115,6 +116,9 @@ public class Main {
                     case ADD:
                         add(ois);
                         break;
+                    case DELETE_TERM:
+                        deleteTerm(ois, ous);
+                        break;
 
                 }
 
@@ -164,6 +168,16 @@ public class Main {
                 termsRepository.saveAndFlush(newTerm);
 
             }
+
+        }
+
+        private void deleteTerm(ObjectInputStream ois, ObjectOutputStream ous) throws IOException, ClassNotFoundException {
+
+            String term = (String) ois.readObject();
+
+            Optional<Term> found = termsRepository.findByTerm(term);
+
+            found.ifPresent(term1 -> termsRepository.delete(term1));
 
         }
 
