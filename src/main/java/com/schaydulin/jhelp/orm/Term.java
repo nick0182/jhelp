@@ -1,7 +1,5 @@
 package com.schaydulin.jhelp.orm;
 
-import org.springframework.data.domain.Persistable;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "Terms")
-public class Term implements Persistable<Integer> {
+public class Term {
 
     @Id
     @GeneratedValue
@@ -55,13 +53,4 @@ public class Term implements Persistable<Integer> {
         return Objects.hash(id);
     }
 
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    @Override
-    public boolean isNew() {
-        return false;
-    }
 }

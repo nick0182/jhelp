@@ -79,9 +79,9 @@ public class Main {
                     es.submit(new ClientWorker(clientSocket));
                 }
             } catch (IOException e) {
-                es.shutdown();
             } finally {
                 try {
+                    es.shutdown();
                     serverSocket.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -117,7 +117,7 @@ public class Main {
                         add(ois);
                         break;
                     case DELETE_TERM:
-                        deleteTerm(ois, ous);
+                        deleteTerm(ois);
                         break;
 
                 }
@@ -171,7 +171,7 @@ public class Main {
 
         }
 
-        private void deleteTerm(ObjectInputStream ois, ObjectOutputStream ous) throws IOException, ClassNotFoundException {
+        private void deleteTerm(ObjectInputStream ois) throws IOException, ClassNotFoundException {
 
             String term = (String) ois.readObject();
 
